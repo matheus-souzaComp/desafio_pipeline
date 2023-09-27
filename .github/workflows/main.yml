@@ -1,0 +1,51 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build
+      run: npm run build
+
+    - name: Deploy to Environment
+      id: deployment
+      run: |
+        if [[ "${{ matrix.environment }}" == "homologacao" ]]; then
+          # Configurar o bucket de homologação
+          echo "Implantação em homologação"
+          # Comandos para implantar em homologação
+        elif [[ "${{ matrix.environment }}" == "producao" ]]; then
+          # Verificar se há um determinado conteúdo no commit
+          if git log -n 1 --pretty=format:%B | grep -q "SeuTextoAqui"; then
+            # Configurar o bucket de produção
+            echo "Implantação em produção"
+            # Comandos para implantar em produção
+          else
+            echo "Nenhum conteúdo correspondente no commit. Ignorando implantação em produção."
+          fi
+        else
+          echo "Ambiente não reconhecido."
+          exit 1
+        fi
+      env:
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      matrix:
+        environment:
+          - homologacao
+          - producao
