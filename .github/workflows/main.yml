@@ -8,6 +8,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        environment:
+          - homologacao:
+              bucket: "seu-bucket-de-homologacao"
+          - producao:
+              bucket: "seu-bucket-de-producao"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -24,18 +33,17 @@ jobs:
       run: npm run build
 
     - name: Deploy to Environment
-      id: deployment
       run: |
         if [[ "${{ matrix.environment }}" == "homologacao" ]]; then
-          # Configurar o bucket de homologação
           echo "Implantação em homologação"
-          # Comandos para implantar em homologação
+          # Use ferramentas de linha de comando AWS ou outros comandos necessários
+          # para enviar os arquivos para o bucket de homologação.
         elif [[ "${{ matrix.environment }}" == "producao" ]]; then
-          # Verificar se há um determinado conteúdo no commit
+          echo "Implantação em produção"
+          # Verifique se existe um determinado conteúdo no commit
           if git log -n 1 --pretty=format:%B | grep -q "SeuTextoAqui"; then
-            # Configurar o bucket de produção
-            echo "Implantação em produção"
-            # Comandos para implantar em produção
+            # Use ferramentas de linha de comando AWS ou outros comandos necessários
+            # para enviar os arquivos para o bucket de produção.
           else
             echo "Nenhum conteúdo correspondente no commit. Ignorando implantação em produção."
           fi
@@ -43,9 +51,7 @@ jobs:
           echo "Ambiente não reconhecido."
           exit 1
         fi
+
       env:
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      matrix:
-        environment:
-          - homologacao
-          - producao
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
