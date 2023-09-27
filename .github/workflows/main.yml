@@ -13,7 +13,7 @@ jobs:
       matrix:
         environment:
           - homologacao:
-              bucket: "seu-bucket-de-homologacao"
+              bucket: "aws s3api create-bucket --bucket meu-bucket-de-homologacao --region us-east-1"
           - producao:
               bucket: "seu-bucket-de-producao"
 
