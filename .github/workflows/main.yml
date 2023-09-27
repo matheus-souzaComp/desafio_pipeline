@@ -15,7 +15,7 @@ jobs:
           - homologacao:
               bucket: "aws s3api create-bucket --bucket meu-bucket-de-homologacao --region us-east-1"
           - producao:
-              bucket: "seu-bucket-de-producao"
+              bucket: "aws s3api create-bucket --bucket meu-bucket-de-producao --region us-east-1"
 
     steps:
     - name: Checkout code
